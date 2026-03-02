@@ -43,6 +43,7 @@ export interface ComponentTreeViewProps {
 
 interface TreeNode {
   id: string;
+  componentId: string; // 実際のコンポーネント ID
   component: SBOMComponent;
   children: TreeNode[];
   depth: number;
@@ -66,20 +67,24 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
     const rootComponents = components.filter((c) => c.parentIds.length === 0);
 
     // ツリーノードを再帰的に構築
-    const buildTree = (component: SBOMComponent, depth: number): TreeNode => {
+    // 各ノードに一意の ID を生成（親のパス + コンポーネント ID）
+    const buildTree = (component: SBOMComponent, depth: number, parentPath: string): TreeNode => {
+      const nodeId = parentPath ? `${parentPath}/${component.id}` : component.id;
+      
       const children = components
         .filter((c) => c.parentIds.includes(component.id))
-        .map((c) => buildTree(c, depth + 1));
+        .map((c) => buildTree(c, depth + 1, nodeId));
 
       return {
-        id: component.id,
+        id: nodeId,
+        componentId: component.id,
         component,
         children,
         depth,
       };
     };
 
-    return rootComponents.map((c) => buildTree(c, 0));
+    return rootComponents.map((c) => buildTree(c, 0, ''));
   }, [state.sbom]);
 
   // フィルタリングとフラット化
@@ -229,18 +234,49 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
     ).length;
   }, [state.sbom, selectedIds]);
 
+  // 選択されたコンポーネントに対応するツリーノード ID を見つける
+  const selectedTreeItemId = useMemo(() => {
+    if (!state.selectedComponentId) return undefined;
+    
+    // ツリーをフラット化して、選択されたコンポーネント ID を持つ最初のノードを見つける
+    const findNodeId = (nodes: TreeNode[]): string | undefined => {
+      for (const node of nodes) {
+        if (node.componentId === state.selectedComponentId) {
+          return node.id;
+        }
+        const childResult = findNodeId(node.children);
+        if (childResult) return childResult;
+      }
+      return undefined;
+    };
+    
+    return findNodeId(treeData);
+  }, [state.selectedComponentId, treeData]);
+
+  // ツリーアイテム選択ハンドラ
+  const handleTreeItemSelect = useCallback(
+    (_event: React.SyntheticEvent, itemId: string | null) => {
+      if (itemId) {
+        // itemId からコンポーネント ID を抽出（最後の / 以降）
+        const componentId = itemId.includes('/') ? itemId.split('/').pop()! : itemId;
+        handleComponentSelect(componentId);
+      }
+    },
+    [handleComponentSelect]
+  );
+
   // ツリーノードをレンダリング（再帰的）
   // Note: useCallback with recursive function requires the function to be in dependencies
   // which creates a circular dependency. Using regular function instead.
   const renderTreeNode = (node: TreeNode): React.ReactElement => {
-    const { component, children } = node;
-    const isSelected = state.selectedComponentId === component.id;
-    const isChecked = selectedIds.has(component.id);
+    const { component, children, componentId } = node;
+    const isSelected = state.selectedComponentId === componentId;
+    const isChecked = selectedIds.has(componentId);
 
     return (
       <TreeItem
-        key={component.id}
-        itemId={component.id}
+        key={node.id}
+        itemId={node.id}
         label={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
             <Checkbox
@@ -248,7 +284,7 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
               checked={isChecked}
               onClick={(e) => {
                 e.stopPropagation();
-                handleToggleSelect(component.id);
+                handleToggleSelect(componentId);
               }}
             />
             <Typography variant="body2" sx={{ fontWeight: isSelected ? 600 : 400 }}>
@@ -260,9 +296,6 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
             <Chip label={component.type} size="small" color="primary" variant="outlined" />
           </Box>
         }
-        onClick={() => {
-          handleComponentSelect(component.id);
-        }}
       >
         {children.map((child) => renderTreeNode(child))}
       </TreeItem>
@@ -374,8 +407,15 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
       {/* ツリー表示 */}
       <Box sx={{ flex: 1, overflow: 'auto' }}>
         <SimpleTreeView
-          selectedItems={state.selectedComponentId ?? undefined}
-          sx={{ px: { xs: 1, sm: 2 }, pb: 2 }}
+          selectedItems={selectedTreeItemId}
+          onSelectedItemsChange={handleTreeItemSelect}
+          sx={{
+            px: { xs: 1, sm: 2 },
+            pb: 2,
+            '& .MuiTreeItem-label': { whiteSpace: 'nowrap', overflow: 'visible' },
+            '& .MuiTreeItem-content': { overflow: 'visible' },
+            '& .MuiTreeItem-iconContainer + .MuiTreeItem-label': { overflow: 'visible' },
+          }}
         >
           {treeData.map((node) => renderTreeNode(node))}
         </SimpleTreeView>

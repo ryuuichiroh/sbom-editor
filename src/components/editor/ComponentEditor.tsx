@@ -21,6 +21,7 @@ import {
   Chip,
   Autocomplete,
   Alert,
+  AlertTitle,
   FormHelperText,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, Warning as WarningIcon } from '@mui/icons-material';
@@ -165,11 +166,8 @@ const RelationshipTab = memo(({ component }: RelationshipTabProps) => {
 
         // 全ての関係を更新（既存の関係を削除して新しい関係を追加）
         dispatch({
-          type: 'LOAD_SBOM',
-          payload: {
-            ...state.sbom,
-            relationships: [...filteredRelationships, ...newRelationships],
-          },
+          type: 'UPDATE_RELATIONSHIPS',
+          payload: [...filteredRelationships, ...newRelationships],
         });
       }
     },
@@ -344,9 +342,18 @@ export const ComponentEditor = () => {
       {/* バリデーションエラーサマリー */}
       {!validationResult.isValid && (
         <Alert severity="error" sx={{ m: { xs: 1, sm: 2 } }}>
-          <Typography variant="body2">
+          <AlertTitle>
             {validationResult.errors.length} 件のバリデーションエラーがあります
-          </Typography>
+          </AlertTitle>
+          <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {validationResult.errors.map((error, index) => (
+              <li key={index}>
+                <Typography variant="body2">
+                  <strong>{error.field}</strong>: {error.message}
+                </Typography>
+              </li>
+            ))}
+          </Box>
         </Alert>
       )}
 

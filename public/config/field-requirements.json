@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "社内 SBOM ポリシー準拠設定",
+  "description": "デフォルト必須属性設定",
   "spdx": {
     "document": {
       "SPDXVersion": {
@@ -34,14 +34,6 @@
       "CreatorComment": {
         "specRequired": false,
         "required": false
-      },
-      "DocumentComment": {
-        "specRequired": false,
-        "required": false
-      },
-      "LicenseListVersion": {
-        "specRequired": false,
-        "required": false
       }
     },
     "package": {
@@ -64,16 +56,15 @@
       },
       "PackageSupplier": {
         "specRequired": false,
-        "required": true,
-        "errorMessage": "供給者情報は必須です"
+        "required": false
       },
       "PackageLicenseConcluded": {
         "specRequired": false,
-        "required": true
+        "required": false
       },
       "PackageLicenseDeclared": {
         "specRequired": false,
-        "required": true
+        "required": false
       },
       "PackageCopyrightText": {
         "specRequired": false,
@@ -81,7 +72,7 @@
       },
       "PackageChecksum": {
         "specRequired": false,
-        "required": true,
+        "required": false,
         "hint": "SHA-256 を推奨"
       },
       "ExternalRef": {
@@ -89,14 +80,6 @@
         "required": false
       },
       "PrimaryPackagePurpose": {
-        "specRequired": false,
-        "required": false
-      },
-      "FilesAnalyzed": {
-        "specRequired": false,
-        "required": false
-      },
-      "PackageVerificationCode": {
         "specRequired": false,
         "required": false
       }
@@ -183,7 +166,7 @@
       },
       "purl": {
         "specRequired": false,
-        "required": true,
+        "required": false,
         "hint": "例: pkg:npm/lodash@4.17.21"
       },
       "cpe": {
@@ -192,7 +175,7 @@
       },
       "licenses": {
         "specRequired": false,
-        "required": true
+        "required": false
       },
       "hashes": {
         "specRequired": false,

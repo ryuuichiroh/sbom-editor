@@ -29,6 +29,7 @@ export type SBOMAction =
   | { type: 'ADD_RELATIONSHIP'; payload: Relationship }
   | { type: 'UPDATE_RELATIONSHIP'; payload: { index: number; updates: Partial<Relationship> } }
   | { type: 'DELETE_RELATIONSHIP'; payload: number }
+  | { type: 'UPDATE_RELATIONSHIPS'; payload: Relationship[] }
   | { type: 'SELECT_COMPONENT'; payload: string | null }
   | { type: 'MARK_AS_SAVED' };
 
@@ -177,6 +178,18 @@ function sbomReducer(state: SBOMState, action: SBOMAction): SBOMState {
         sbom: {
           ...state.sbom,
           relationships: state.sbom.relationships.filter((_, i) => i !== action.payload),
+        },
+        isModified: true,
+      };
+    }
+
+    case 'UPDATE_RELATIONSHIPS': {
+      if (!state.sbom) return state;
+      return {
+        ...state,
+        sbom: {
+          ...state.sbom,
+          relationships: action.payload,
         },
         isModified: true,
       };

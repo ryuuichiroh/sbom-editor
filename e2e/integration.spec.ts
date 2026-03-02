@@ -20,7 +20,7 @@ test.describe('Integration Tests', () => {
     await versionInput.fill('2.0.0');
 
     // Step 3: Navigate to license tab
-    const licenseTab = page.locator('[role="tab"]:has-text("ライセンス")');
+    const licenseTab = page.getByRole('main').locator('[role="tab"]:has-text("ライセンス")');
     if (await licenseTab.count() > 0) {
       await licenseTab.click();
       await expect(page.getByRole('textbox', { name: 'SPDX License ID' })).toHaveValue('MIT');

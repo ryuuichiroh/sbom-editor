@@ -41,7 +41,7 @@ export async function openComponentEditor(page: Page, componentName: string): Pr
  * タブを切り替える
  */
 export async function switchTab(page: Page, tabName: string): Promise<void> {
-  const tab = page.locator(`button:has-text("${tabName}")`).or(page.locator(`[role="tab"]:has-text("${tabName}")`));
+  const tab = page.getByRole('main').locator(`button:has-text("${tabName}")`).or(page.getByRole('main').locator(`[role="tab"]:has-text("${tabName}")`));
   if (await tab.count() > 0) {
     await tab.click();
   }

@@ -105,7 +105,7 @@ test.describe('CycloneDX Workflow', () => {
     await page.locator('text=test-package').click();
 
     // Navigate to license tab
-    const licenseTab = page.locator('[role="tab"]:has-text("ライセンス")');
+    const licenseTab = page.getByRole('main').locator('[role="tab"]:has-text("ライセンス")');
     if (await licenseTab.count() > 0) {
       await licenseTab.click();
       // MIT is inside the SPDX License ID textbox
