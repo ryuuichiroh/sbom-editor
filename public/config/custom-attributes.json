@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "description": "社内カスタム属性定義",
+  "attributes": [
+    {
+      "name": "internal:team",
+      "label": "担当チーム",
+      "description": "このコンポーネントを管理する社内チーム名",
+      "valueType": "string",
+      "required": true,
+      "errorMessage": "担当チームは必須です",
+      "options": ["platform", "security", "frontend", "backend"]
+    },
+    {
+      "name": "internal:approved-licenses",
+      "label": "承認済みライセンス",
+      "description": "社内で使用が承認されているライセンスの一覧",
+      "valueType": "string[]",
+      "required": true,
+      "delimiter": ",",
+      "options": ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause"]
+    },
+    {
+      "name": "internal:review-status",
+      "label": "レビューステータス",
+      "description": "コンポーネントのレビュー状態",
+      "valueType": "string",
+      "required": true,
+      "options": ["pending", "approved", "rejected"],
+      "applicableTo": ["library", "framework"]
+    },
+    {
+      "name": "internal:tags",
+      "label": "タグ",
+      "description": "任意のタグを複数設定可能",
+      "valueType": "string[]",
+      "required": false
+    },
+    {
+      "name": "internal:security-scan-date",
+      "label": "セキュリティスキャン日",
+      "description": "最後にセキュリティスキャンを実施した日付",
+      "valueType": "string",
+      "required": false
+    },
+    {
+      "name": "internal:criticality",
+      "label": "重要度",
+      "description": "コンポーネントの重要度レベル",
+      "valueType": "string",
+      "required": false,
+      "options": ["low", "medium", "high", "critical"]
+    }
+  ]
+}

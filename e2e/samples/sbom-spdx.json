@@ -1,0 +1,132 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "Ricoh Liverpool Subsystem Firmware SBOM",
+  "documentNamespace": "https://spdx.org/spdxdocs/Ricoh Liverpool Subsystem Firmware-96f9ec23-4782-4f5f-9be6-e089c66579ba",
+  "creationInfo": {
+    "created": "2026-02-27T10:07:04Z",
+    "creators": [
+      "Tool: ScanCode-Toolkit",
+      "Tool: sbom-master"
+    ],
+    "licenseListVersion": "3.27"
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-Root",
+      "name": "Ricoh Liverpool Subsystem Firmware",
+      "versionInfo": "00.37.06",
+      "supplier": "Organization: Ricoh Co., Ltd.",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "LicenseRef-Proprietary-Ricoh",
+      "licenseDeclared": "LicenseRef-Proprietary-Ricoh",
+      "copyrightText": "Copyright Ricoh Co., Ltd."
+    },
+    {
+      "SPDXID": "SPDXRef-Package-iar-systems-ab",
+      "name": "IAR Systems AB",
+      "versionInfo": "NOASSERTION",
+      "supplier": "Organization: IAR Systems AB",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "Copyright IAR Systems AB"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-the-regents-of-the-university-of-california",
+      "name": "BSD printf implementation",
+      "versionInfo": "NOASSERTION",
+      "supplier": "Organization: The Regents of the University of California",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD-4-Clause-UC",
+      "licenseDeclared": "BSD-4-Clause-UC",
+      "copyrightText": "Copyright The Regents of the University of California"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-unix-system-laboratories",
+      "name": "UNIX System Laboratories, Inc.",
+      "versionInfo": "NOASSERTION",
+      "supplier": "Organization: UNIX System Laboratories, Inc.",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD-4-Clause-UC",
+      "licenseDeclared": "BSD-4-Clause-UC",
+      "copyrightText": "Copyright UNIX System Laboratories, Inc."
+    },
+    {
+      "SPDXID": "SPDXRef-Package-express-logic",
+      "name": "ThreadX RTOS",
+      "versionInfo": "5.8.5",
+      "supplier": "Organization: Express Logic Inc.",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "LicenseRef-Proprietary-ThreadX",
+      "licenseDeclared": "LicenseRef-Proprietary-ThreadX",
+      "copyrightText": "Copyright Express Logic Inc."
+    },
+    {
+      "SPDXID": "SPDXRef-Package-murata-manufacturing",
+      "name": "Murata Wi-Fi Module API",
+      "versionInfo": "NOASSERTION",
+      "supplier": "Organization: Murata Manufacturing Co., Ltd.",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "LicenseRef-Proprietary-Murata",
+      "licenseDeclared": "LicenseRef-Proprietary-Murata",
+      "copyrightText": "Copyright Murata Manufacturing Co., Ltd."
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-Root"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-Root",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-iar-systems-ab"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-Root",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-the-regents-of-the-university-of-california"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-Root",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-unix-system-laboratories"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-Root",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-express-logic"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-Root",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-Package-murata-manufacturing"
+    }
+  ],
+  "hasExtractedLicensingInfos": [
+    {
+      "licenseId": "LicenseRef-Proprietary-ThreadX",
+      "extractedText": "Proprietary license. See ThreadX RTOS license agreement.",
+      "name": "ThreadX RTOS License"
+    },
+    {
+      "licenseId": "LicenseRef-Proprietary-Murata",
+      "extractedText": "Proprietary license. See Murata Wi-Fi Module API license agreement.",
+      "name": "Murata Wi-Fi Module API License"
+    },
+    {
+      "licenseId": "LicenseRef-Proprietary-Ricoh",
+      "extractedText": "Proprietary license. See Ricoh Liverpool Subsystem Firmware license agreement.",
+      "name": "Ricoh Liverpool Subsystem Firmware License"
+    }
+  ]
+}

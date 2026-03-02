@@ -1,0 +1,150 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:940cf62a-2a3f-4b10-8ff7-040567483972",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-02-27T10:07:04Z",
+    "tools": [
+      {
+        "vendor": "nexB Inc.",
+        "name": "ScanCode Toolkit"
+      },
+      {
+        "name": "sbom-master"
+      }
+    ],
+    "component": {
+      "type": "firmware",
+      "bom-ref": "root-component",
+      "name": "Ricoh Liverpool Subsystem Firmware",
+      "version": "00.37.06",
+      "supplier": {
+        "name": "Ricoh Co., Ltd."
+      },
+      "licenses": [
+        {
+          "expression": "LicenseRef-Proprietary-Ricoh"
+        }
+      ],
+      "copyright": "Copyright Ricoh Co., Ltd."
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "iar-systems-ab",
+      "type": "library",
+      "name": "IAR Systems AB",
+      "supplier": {
+        "name": "IAR Systems AB"
+      },
+      "copyright": "Copyright IAR Systems AB"
+    },
+    {
+      "bom-ref": "the-regents-of-the-university-of-california",
+      "type": "library",
+      "name": "BSD printf implementation",
+      "supplier": {
+        "name": "The Regents of the University of California"
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-4-Clause-UC"
+          }
+        }
+      ],
+      "copyright": "Copyright The Regents of the University of California"
+    },
+    {
+      "bom-ref": "unix-system-laboratories",
+      "type": "library",
+      "name": "UNIX System Laboratories, Inc.",
+      "supplier": {
+        "name": "UNIX System Laboratories, Inc."
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-4-Clause-UC"
+          }
+        }
+      ],
+      "copyright": "Copyright UNIX System Laboratories, Inc."
+    },
+    {
+      "bom-ref": "express-logic",
+      "type": "library",
+      "name": "ThreadX RTOS",
+      "version": "5.8.5",
+      "supplier": {
+        "name": "Express Logic Inc."
+      },
+      "licenses": [
+        {
+          "expression": "LicenseRef-Proprietary-ThreadX"
+        }
+      ],
+      "copyright": "Copyright Express Logic Inc."
+    },
+    {
+      "bom-ref": "murata-manufacturing",
+      "type": "library",
+      "name": "Murata Wi-Fi Module API",
+      "supplier": {
+        "name": "Murata Manufacturing Co., Ltd."
+      },
+      "licenses": [
+        {
+          "expression": "LicenseRef-Proprietary-Murata"
+        }
+      ],
+      "copyright": "Copyright Murata Manufacturing Co., Ltd."
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "root-component",
+      "dependsOn": [
+        "iar-systems-ab",
+        "the-regents-of-the-university-of-california",
+        "unix-system-laboratories",
+        "express-logic",
+        "murata-manufacturing"
+      ]
+    },
+    {
+      "ref": "iar-systems-ab",
+      "dependsOn": []
+    },
+    {
+      "ref": "the-regents-of-the-university-of-california",
+      "dependsOn": []
+    },
+    {
+      "ref": "unix-system-laboratories",
+      "dependsOn": []
+    },
+    {
+      "ref": "express-logic",
+      "dependsOn": []
+    },
+    {
+      "ref": "murata-manufacturing",
+      "dependsOn": []
+    }
+  ],
+  "compositions": [
+    {
+      "aggregate": "incomplete",
+      "assemblies": [
+        "root-component",
+        "iar-systems-ab",
+        "the-regents-of-the-university-of-california",
+        "unix-system-laboratories",
+        "express-logic",
+        "murata-manufacturing"
+      ]
+    }
+  ]
+}

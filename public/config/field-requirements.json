@@ -1,0 +1,219 @@
+{
+  "version": "1.0.0",
+  "description": "社内 SBOM ポリシー準拠設定",
+  "spdx": {
+    "document": {
+      "SPDXVersion": {
+        "specRequired": true,
+        "required": true
+      },
+      "DataLicense": {
+        "specRequired": true,
+        "required": true
+      },
+      "SPDXID": {
+        "specRequired": true,
+        "required": true
+      },
+      "DocumentName": {
+        "specRequired": true,
+        "required": true
+      },
+      "DocumentNamespace": {
+        "specRequired": true,
+        "required": true
+      },
+      "Creator": {
+        "specRequired": true,
+        "required": true
+      },
+      "Created": {
+        "specRequired": true,
+        "required": true
+      },
+      "CreatorComment": {
+        "specRequired": false,
+        "required": false
+      },
+      "DocumentComment": {
+        "specRequired": false,
+        "required": false
+      },
+      "LicenseListVersion": {
+        "specRequired": false,
+        "required": false
+      }
+    },
+    "package": {
+      "PackageName": {
+        "specRequired": true,
+        "required": true
+      },
+      "SPDXID": {
+        "specRequired": true,
+        "required": true
+      },
+      "PackageDownloadLocation": {
+        "specRequired": true,
+        "required": true
+      },
+      "PackageVersion": {
+        "specRequired": false,
+        "required": true,
+        "errorMessage": "バージョンは必須です"
+      },
+      "PackageSupplier": {
+        "specRequired": false,
+        "required": true,
+        "errorMessage": "供給者情報は必須です"
+      },
+      "PackageLicenseConcluded": {
+        "specRequired": false,
+        "required": true
+      },
+      "PackageLicenseDeclared": {
+        "specRequired": false,
+        "required": true
+      },
+      "PackageCopyrightText": {
+        "specRequired": false,
+        "required": false
+      },
+      "PackageChecksum": {
+        "specRequired": false,
+        "required": true,
+        "hint": "SHA-256 を推奨"
+      },
+      "ExternalRef": {
+        "specRequired": false,
+        "required": false
+      },
+      "PrimaryPackagePurpose": {
+        "specRequired": false,
+        "required": false
+      },
+      "FilesAnalyzed": {
+        "specRequired": false,
+        "required": false
+      },
+      "PackageVerificationCode": {
+        "specRequired": false,
+        "required": false
+      }
+    },
+    "file": {
+      "FileName": {
+        "specRequired": true,
+        "required": true
+      },
+      "SPDXID": {
+        "specRequired": true,
+        "required": true
+      },
+      "FileChecksum": {
+        "specRequired": true,
+        "required": true
+      },
+      "LicenseConcluded": {
+        "specRequired": true,
+        "required": true
+      },
+      "FileCopyrightText": {
+        "specRequired": true,
+        "required": true
+      }
+    }
+  },
+  "cyclonedx": {
+    "metadata": {
+      "bomFormat": {
+        "specRequired": true,
+        "required": true
+      },
+      "specVersion": {
+        "specRequired": true,
+        "required": true
+      },
+      "serialNumber": {
+        "specRequired": false,
+        "required": true
+      },
+      "version": {
+        "specRequired": false,
+        "required": false
+      },
+      "timestamp": {
+        "specRequired": false,
+        "required": true
+      },
+      "tools": {
+        "specRequired": false,
+        "required": false
+      },
+      "authors": {
+        "specRequired": false,
+        "required": false
+      },
+      "supplier": {
+        "specRequired": false,
+        "required": false
+      }
+    },
+    "component": {
+      "type": {
+        "specRequired": true,
+        "required": true
+      },
+      "name": {
+        "specRequired": true,
+        "required": true
+      },
+      "bom-ref": {
+        "specRequired": false,
+        "required": true
+      },
+      "version": {
+        "specRequired": false,
+        "required": true,
+        "errorMessage": "バージョンは必須です"
+      },
+      "group": {
+        "specRequired": false,
+        "required": false
+      },
+      "purl": {
+        "specRequired": false,
+        "required": true,
+        "hint": "例: pkg:npm/lodash@4.17.21"
+      },
+      "cpe": {
+        "specRequired": false,
+        "required": false
+      },
+      "licenses": {
+        "specRequired": false,
+        "required": true
+      },
+      "hashes": {
+        "specRequired": false,
+        "required": false
+      },
+      "supplier": {
+        "specRequired": false,
+        "required": false
+      },
+      "description": {
+        "specRequired": false,
+        "required": false
+      },
+      "scope": {
+        "specRequired": false,
+        "required": false
+      },
+      "externalReferences": {
+        "specRequired": false,
+        "required": false
+      }
+    }
+  }
+}
