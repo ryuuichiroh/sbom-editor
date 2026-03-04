@@ -13,7 +13,8 @@ SPDX 2.3 と CycloneDX 1.4 の両フォーマットに対応した SBOM（Softwa
 - **コンポーネント管理**: ツリービューでの階層表示、親子関係の設定、循環参照の検出
 - **カスタム属性**: 標準仕様外の属性を動的に追加、または設定ファイルで事前定義
 - **バリデーション**: 仕様上の必須フィールドと組織ポリシーに基づく必須フィールドのチェック
-- **クライアントサイド動作**: サーバー不要、ブラウザ内で完結
+- **ストア連携**: sbom-store との連携により SBOM の保存・読み込み、承認管理が可能
+- **クライアントサイド動作**: サーバー不要、ブラウザ内で完結（ストア連携はオプション）
 
 ## 技術スタック
 
@@ -35,6 +36,28 @@ npm run dev
 ```
 
 ブラウザで `http://localhost:5173` を開いてください。
+
+### 環境変数
+
+ストア接続設定を環境変数で指定できます。
+
+```bash
+# .env ファイルを作成（.env.example をコピー）
+cp .env.example .env
+```
+
+`.env` ファイルで以下の変数を設定:
+
+```env
+# SBOM Store バックエンドサーバーの URL
+VITE_SBOM_STORE_URL=http://localhost:3000
+```
+
+**優先順位**: localStorage > 環境変数
+
+- localStorage に値がある場合はそちらが優先されます
+- localStorage に値がない場合、環境変数の値が使用されます
+- 設定画面で URL を変更すると localStorage に保存されます
 
 ## 使い方
 
@@ -59,7 +82,7 @@ npm run dev
 
 - サイドバーのツリービューからコンポーネントを選択
 - 基本情報、ライセンス、親子関係、カスタム属性を編集
-- 必須フィールド（*）は入力必須
+- 必須フィールド（\*）は入力必須
 
 ### 4. カスタム属性の追加
 
@@ -72,6 +95,38 @@ npm run dev
 ### 5. ダウンロード
 
 ヘッダーの「ダウンロード」ボタンで編集後の SBOM を保存します。元のフォーマットで出力されます。
+
+### 6. ストア連携（オプション）
+
+sbom-store と連携することで、SBOM の一元管理が可能になります。
+
+#### 6.1 ストア接続の設定
+
+1. ヘッダーの設定アイコンをクリック
+2. 「ストア接続設定」セクションで sbom-store の URL を入力（例: `http://localhost:3000`）
+3. 「接続テスト」ボタンで接続を確認
+4. 接続成功後、URL が自動保存されます
+
+#### 6.2 ストアへ保存
+
+1. ヘッダーの「ストアへ保存」ボタンをクリック
+2. 名前、バージョン、タグを入力
+3. 「保存」ボタンで sbom-store に保存
+
+**注意事項**:
+
+- 同じ名前とバージョンの SBOM が既に存在する場合、上書き確認が表示されます
+- 承認済み SBOM は上書きできません（別の名前/バージョンで保存してください）
+
+#### 6.3 ストアから読み込み
+
+1. ヘッダーの「ストアから読み込み」ボタンをクリック
+2. SBOM 一覧から読み込みたい SBOM を選択
+3. フィルタリング機能で絞り込み可能:
+   - 名前で検索
+   - タグで絞り込み
+   - 承認状態で絞り込み
+4. 「読み込み」ボタンで編集画面にロード
 
 ## 設定ファイル
 
@@ -145,48 +200,22 @@ npm run dev
 
 詳細なスキーマ定義は `public/config/` 配下のサンプルファイルを参照してください。
 
+## sbom-store との連携
+
+sbom-editor は sbom-store バックエンドと連携することで、SBOM の一元管理機能を利用できます。
+
+sbom-store のセットアップ方法は [sbom-store/README.md](https://github.com/ryuuichiroh/sbom-store/blob/main/README.md) を参照してください。
+sbom-store の `.env` で `CORS_ORIGIN` に sbom-editor のオリジン（デフォルト: `http://localhost:5173`）を設定する必要があります。
+
 ## 開発
 
-### テスト
-
 ```bash
-# 単体テスト
-npm test
-
-# カバレッジ付き
-npm run test:coverage
-
-# E2E テスト
-npm run test:e2e
-
-# E2E テスト（UI モード）
-npm run test:e2e:ui
-```
-
-### コード品質
-
-```bash
-# Lint チェック
-npm run lint
-
-# Lint 自動修正
-npm run lint:fix
-
-# フォーマットチェック
-npm run format:check
-
-# フォーマット適用
-npm run format
-```
-
-### ビルド
-
-```bash
-# プロダクションビルド
-npm run build
-
-# ビルド結果のプレビュー
-npm run preview
+npm test              # 単体テスト
+npm run test:coverage # カバレッジ付き
+npm run test:e2e      # E2E テスト（Playwright）
+npm run lint          # Lint チェック
+npm run format        # フォーマット適用
+npm run build         # プロダクションビルド
 ```
 
 ## ディレクトリ構成
@@ -198,14 +227,16 @@ src/
 │   ├── license/     # ライセンス一覧
 │   ├── component/   # コンポーネント管理
 │   ├── editor/      # 属性エディタ
+│   ├── store/       # ストア連携（StoreConnectDialog, StoreSaveDialog）
 │   └── upload/      # ファイルアップロード
 ├── services/        # ビジネスロジック
 │   ├── parser/      # SPDX/CycloneDX パーサー
 │   ├── validator/   # バリデーター
-│   └── exporter/    # エクスポーター
+│   ├── exporter/    # エクスポーター
+│   └── storeClient.ts  # sbom-store API クライアント
 ├── store/           # 状態管理
 ├── types/           # TypeScript 型定義
-├── hooks/           # カスタムフック
+├── hooks/           # カスタムフック（useStoreConnection など）
 └── utils/           # ユーティリティ
 
 public/config/       # デフォルト設定ファイル

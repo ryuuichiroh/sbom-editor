@@ -70,7 +70,7 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
     // 各ノードに一意の ID を生成（親のパス + コンポーネント ID）
     const buildTree = (component: SBOMComponent, depth: number, parentPath: string): TreeNode => {
       const nodeId = parentPath ? `${parentPath}/${component.id}` : component.id;
-      
+
       const children = components
         .filter((c) => c.parentIds.includes(component.id))
         .map((c) => buildTree(c, depth + 1, nodeId));
@@ -113,8 +113,8 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         const matchesName = component.name.toLowerCase().includes(query);
-        const matchesVersion = component.version?.toLowerCase().includes(query);
-        const matchesDescription = component.description?.toLowerCase().includes(query);
+        const matchesVersion = component.version?.toLowerCase().includes(query) ?? false;
+        const matchesDescription = component.description?.toLowerCase().includes(query) ?? false;
         return matchesName || matchesVersion || matchesDescription;
       }
 
@@ -237,7 +237,7 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
   // 選択されたコンポーネントに対応するツリーノード ID を見つける
   const selectedTreeItemId = useMemo(() => {
     if (!state.selectedComponentId) return undefined;
-    
+
     // ツリーをフラット化して、選択されたコンポーネント ID を持つ最初のノードを見つける
     const findNodeId = (nodes: TreeNode[]): string | undefined => {
       for (const node of nodes) {
@@ -249,16 +249,16 @@ export const ComponentTreeView = ({ onComponentSelect }: ComponentTreeViewProps)
       }
       return undefined;
     };
-    
+
     return findNodeId(treeData);
   }, [state.selectedComponentId, treeData]);
 
   // ツリーアイテム選択ハンドラ
   const handleTreeItemSelect = useCallback(
-    (_event: React.SyntheticEvent, itemId: string | null) => {
+    (_event: React.SyntheticEvent | null, itemId: string | null) => {
       if (itemId) {
         // itemId からコンポーネント ID を抽出（最後の / 以降）
-        const componentId = itemId.includes('/') ? itemId.split('/').pop()! : itemId;
+        const componentId = itemId.includes('/') ? (itemId.split('/').pop() ?? itemId) : itemId;
         handleComponentSelect(componentId);
       }
     },

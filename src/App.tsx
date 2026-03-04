@@ -4,7 +4,16 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Box, Drawer, CssBaseline, useMediaQuery, useTheme, Tabs, Tab, Typography } from '@mui/material';
+import {
+  Box,
+  Drawer,
+  CssBaseline,
+  useMediaQuery,
+  useTheme,
+  Tabs,
+  Tab,
+  Typography,
+} from '@mui/material';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -72,21 +81,23 @@ function AppContent() {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       <Tabs
         value={sidebarTab}
-        onChange={(_, value: SidebarTab) => { setSidebarTab(value); }}
+        onChange={(_, value: SidebarTab) => {
+          setSidebarTab(value);
+        }}
         orientation="vertical"
         sx={{ borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}
       >
-        <Tab 
-          icon={<GavelIcon />} 
-          label="ライセンス" 
-          value="licenses" 
+        <Tab
+          icon={<GavelIcon />}
+          label="ライセンス"
+          value="licenses"
           iconPosition="start"
           disabled={!isSBOMLoaded}
         />
-        <Tab 
-          icon={<AccountTreeIcon />} 
-          label="コンポーネント" 
-          value="components" 
+        <Tab
+          icon={<AccountTreeIcon />}
+          label="コンポーネント"
+          value="components"
           iconPosition="start"
           disabled={!isSBOMLoaded}
         />
@@ -125,7 +136,9 @@ function AppContent() {
       <CssBaseline />
 
       <Header
-        onSettingsClick={() => { setSettingsOpen(true); }}
+        onSettingsClick={() => {
+          setSettingsOpen(true);
+        }}
         onMenuClick={isMobile ? handleDrawerToggle : undefined}
       />
 
@@ -178,7 +191,9 @@ function AppContent() {
 
       <SettingsDialog
         open={settingsOpen}
-        onClose={() => { setSettingsOpen(false); }}
+        onClose={() => {
+          setSettingsOpen(false);
+        }}
       />
     </Box>
   );

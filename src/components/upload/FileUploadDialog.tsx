@@ -3,7 +3,7 @@
  * ドラッグ&ドロップ対応、ファイルサイズ上限チェック、フォーマット自動検出、パースエラー表示
  */
 
-import { useState, useCallback, type DragEvent, type ChangeEvent } from 'react';
+import { useState, useCallback, useRef, type DragEvent, type ChangeEvent } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -37,6 +37,7 @@ export const FileUploadDialog = ({ open, onClose }: FileUploadDialogProps) => {
   const { dispatch } = useSBOM();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -222,50 +223,60 @@ export const FileUploadDialog = ({ open, onClose }: FileUploadDialogProps) => {
       <DialogContent>
         <Box sx={{ mt: 2 }}>
           {/* ドラッグ&ドロップエリア */}
-          <Paper
-            variant="outlined"
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            sx={{
-              p: 4,
-              textAlign: 'center',
-              cursor: 'pointer',
-              backgroundColor: isDragging ? 'action.hover' : 'background.paper',
-              borderColor: isDragging ? 'primary.main' : 'divider',
-              borderWidth: 2,
-              borderStyle: 'dashed',
-              transition: 'all 0.2s',
-              '&:hover': {
-                backgroundColor: 'action.hover',
-                borderColor: 'primary.main',
-              },
-            }}
-            onClick={() => document.getElementById('file-input')?.click()}
-          >
-            <CloudUploadIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-            <Typography variant="body1" gutterBottom>
-              ファイルをドラッグ&ドロップ
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              または クリックしてファイルを選択
-            </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
-              対応形式: SPDX (JSON, YAML, tag-value), CycloneDX (JSON, XML)
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              最大ファイルサイズ: {(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB
-            </Typography>
-          </Paper>
+          <Box sx={{ position: 'relative' }}>
+            <Paper
+              variant="outlined"
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              sx={{
+                p: 4,
+                textAlign: 'center',
+                cursor: 'pointer',
+                backgroundColor: isDragging ? 'action.hover' : 'background.paper',
+                borderColor: isDragging ? 'primary.main' : 'divider',
+                borderWidth: 2,
+                borderStyle: 'dashed',
+                transition: 'all 0.2s',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                  borderColor: 'primary.main',
+                },
+              }}
+            >
+              <CloudUploadIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+              <Typography variant="body1" gutterBottom>
+                ファイルをドラッグ&ドロップ
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                または クリックしてファイルを選択
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                対応形式: SPDX (JSON, YAML, tag-value), CycloneDX (JSON, XML)
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                最大ファイルサイズ: {(MAX_FILE_SIZE / 1024 / 1024).toFixed(0)}MB
+              </Typography>
+            </Paper>
 
-          {/* 非表示のファイル入力 */}
-          <input
-            id="file-input"
-            type="file"
-            accept=".json,.yaml,.yml,.xml,.spdx,.rdf"
-            onChange={handleFileSelect}
-            style={{ display: 'none' }}
-          />
+            {/* 透明なファイル入力を上に重ねる */}
+            <input
+              id="file-input"
+              ref={fileInputRef}
+              type="file"
+              accept=".json,.yaml,.yml,.xml,.spdx,.rdf"
+              onChange={handleFileSelect}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                opacity: 0,
+                cursor: 'pointer',
+              }}
+            />
+          </Box>
 
           {/* 選択されたファイル名 */}
           {selectedFile && !error && (

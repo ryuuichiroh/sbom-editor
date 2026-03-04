@@ -38,7 +38,9 @@ test.describe('Basic Upload Test', () => {
     await fileInput.setInputFiles(spdxFilePath);
 
     // Wait for dialog to close (file is processed)
-    await expect(page.getByRole('heading', { name: 'SBOM ファイルをアップロード' })).not.toBeVisible({ timeout: 5000 });
+    await expect(
+      page.getByRole('heading', { name: 'SBOM ファイルをアップロード' })
+    ).not.toBeVisible({ timeout: 5000 });
 
     // Verify component appears in tree view
     await expect(page.locator('text=test-package')).toBeVisible({ timeout: 5000 });

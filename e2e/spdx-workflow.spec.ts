@@ -46,7 +46,9 @@ test.describe('SPDX Workflow', () => {
     expect(downloadedContent.spdxVersion).toBe('SPDX-2.3');
     expect(downloadedContent.packages).toBeDefined();
 
-    const updatedPackage = downloadedContent.packages.find((pkg: any) => pkg.name === 'test-package');
+    const updatedPackage = downloadedContent.packages.find(
+      (pkg: any) => pkg.name === 'test-package'
+    );
     expect(updatedPackage).toBeDefined();
     expect(updatedPackage.versionInfo).toBe('2.0.0');
 
@@ -80,7 +82,7 @@ test.describe('SPDX Workflow', () => {
 
     // Navigate to license tab
     const licenseTab = page.getByRole('main').locator('[role="tab"]:has-text("ライセンス")');
-    if (await licenseTab.count() > 0) {
+    if ((await licenseTab.count()) > 0) {
       await licenseTab.click();
       // MIT is inside the SPDX License ID textbox
       await expect(page.getByRole('textbox', { name: 'SPDX License ID' })).toHaveValue('MIT');

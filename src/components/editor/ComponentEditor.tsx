@@ -200,7 +200,7 @@ const RelationshipTab = memo(({ component }: RelationshipTabProps) => {
           renderInput={(params) => (
             <TextField {...params} label="親コンポーネント" placeholder="選択してください" />
           )}
-          renderTags={(value, getTagProps) =>
+          renderValue={(value, getTagProps) =>
             value.map((option, index) => (
               <Chip
                 label={`${option.name} ${option.version ?? ''}`}
@@ -399,11 +399,11 @@ export const ComponentEditor = () => {
                   />
                   {(getFieldError(validationResult.errors, 'version') ??
                     getFieldError(validationResult.errors, 'PackageVersion')) && (
-                      <FormHelperText error>
-                        {getFieldError(validationResult.errors, 'version')?.message ??
-                          getFieldError(validationResult.errors, 'PackageVersion')?.message}
-                      </FormHelperText>
-                    )}
+                    <FormHelperText error>
+                      {getFieldError(validationResult.errors, 'version')?.message ??
+                        getFieldError(validationResult.errors, 'PackageVersion')?.message}
+                    </FormHelperText>
+                  )}
                 </Box>
                 <Box>
                   <TextField
@@ -534,11 +534,11 @@ export const ComponentEditor = () => {
                       />
                       {(getFieldError(validationResult.errors, 'spdxId') ??
                         getFieldError(validationResult.errors, 'SPDXID')) && (
-                          <FormHelperText error>
-                            {getFieldError(validationResult.errors, 'spdxId')?.message ??
-                              getFieldError(validationResult.errors, 'SPDXID')?.message}
-                          </FormHelperText>
-                        )}
+                        <FormHelperText error>
+                          {getFieldError(validationResult.errors, 'spdxId')?.message ??
+                            getFieldError(validationResult.errors, 'SPDXID')?.message}
+                        </FormHelperText>
+                      )}
                     </Box>
                     <Box>
                       <TextField
@@ -557,12 +557,12 @@ export const ComponentEditor = () => {
                       />
                       {(getFieldError(validationResult.errors, 'downloadLocation') ??
                         getFieldError(validationResult.errors, 'PackageDownloadLocation')) && (
-                          <FormHelperText error>
-                            {getFieldError(validationResult.errors, 'downloadLocation')?.message ??
-                              getFieldError(validationResult.errors, 'PackageDownloadLocation')
-                                ?.message}
-                          </FormHelperText>
-                        )}
+                        <FormHelperText error>
+                          {getFieldError(validationResult.errors, 'downloadLocation')?.message ??
+                            getFieldError(validationResult.errors, 'PackageDownloadLocation')
+                              ?.message}
+                        </FormHelperText>
+                      )}
                     </Box>
                     <FormControlLabel
                       control={

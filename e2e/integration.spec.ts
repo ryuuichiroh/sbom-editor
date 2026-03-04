@@ -21,7 +21,7 @@ test.describe('Integration Tests', () => {
 
     // Step 3: Navigate to license tab
     const licenseTab = page.getByRole('main').locator('[role="tab"]:has-text("ライセンス")');
-    if (await licenseTab.count() > 0) {
+    if ((await licenseTab.count()) > 0) {
       await licenseTab.click();
       await expect(page.getByRole('textbox', { name: 'SPDX License ID' })).toHaveValue('MIT');
     }
@@ -60,7 +60,7 @@ test.describe('Integration Tests', () => {
 
     // Step 3: Navigate to custom attributes tab
     const customAttrTab = page.locator('[role="tab"]:has-text("カスタム属性")');
-    if (await customAttrTab.count() > 0) {
+    if ((await customAttrTab.count()) > 0) {
       await customAttrTab.click();
       await page.waitForTimeout(500);
     }
@@ -68,7 +68,7 @@ test.describe('Integration Tests', () => {
     // Step 4: Go back to basic info and edit PURL
     await page.locator('[role="tab"]:has-text("基本情報")').click();
     const purlInput = page.locator('label:has-text("PURL") >> xpath=.. >> input');
-    if (await purlInput.count() > 0) {
+    if ((await purlInput.count()) > 0) {
       await purlInput.fill('pkg:npm/test-package@2.0.0');
     }
 
@@ -140,7 +140,7 @@ test.describe('Integration Tests', () => {
 
     // Navigate to relationships tab
     const relationshipsTab = page.locator('[role="tab"]:has-text("関係")');
-    if (await relationshipsTab.count() > 0) {
+    if ((await relationshipsTab.count()) > 0) {
       await relationshipsTab.click();
       await page.waitForTimeout(500);
 
@@ -159,7 +159,7 @@ test.describe('Integration Tests', () => {
 
     // Look for search input
     const searchInput = page.locator('input[placeholder*="検索"]');
-    if (await searchInput.count() > 0) {
+    if ((await searchInput.count()) > 0) {
       await searchInput.fill('test');
       await page.waitForTimeout(500);
 

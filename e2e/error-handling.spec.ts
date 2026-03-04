@@ -19,7 +19,7 @@ test.describe('Error Handling', () => {
 
     // Try to clear the name field
     const nameInput = page.locator('label:has-text("名前") >> xpath=.. >> input');
-    if (await nameInput.count() > 0) {
+    if ((await nameInput.count()) > 0) {
       await nameInput.fill('');
       await nameInput.blur();
       await page.waitForTimeout(500);
@@ -59,17 +59,19 @@ test.describe('Component Operations', () => {
 
     // Fill in new component details in the dialog
     const nameInput = page.locator('[role="dialog"] label:has-text("名前") >> xpath=.. >> input');
-    if (await nameInput.count() > 0) {
+    if ((await nameInput.count()) > 0) {
       await nameInput.fill('new-component');
 
-      const versionInput = page.locator('[role="dialog"] label:has-text("バージョン") >> xpath=.. >> input');
-      if (await versionInput.count() > 0) {
+      const versionInput = page.locator(
+        '[role="dialog"] label:has-text("バージョン") >> xpath=.. >> input'
+      );
+      if ((await versionInput.count()) > 0) {
         await versionInput.fill('1.0.0');
       }
 
       // Submit
       const submitButton = page.locator('[role="dialog"] button:has-text("追加")');
-      if (await submitButton.count() > 0) {
+      if ((await submitButton.count()) > 0) {
         await submitButton.click();
         await expect(page.locator('text=new-component')).toBeVisible({ timeout: 3000 });
       }
@@ -93,7 +95,7 @@ test.describe('Component Operations', () => {
 
     // Confirm deletion in dialog
     const confirmButton = page.locator('[role="dialog"] button:has-text("削除")');
-    if (await confirmButton.count() > 0) {
+    if ((await confirmButton.count()) > 0) {
       await confirmButton.click();
       await expect(page.locator('text=test-package')).not.toBeVisible({ timeout: 3000 });
     }

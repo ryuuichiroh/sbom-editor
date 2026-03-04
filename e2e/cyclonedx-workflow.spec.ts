@@ -41,7 +41,9 @@ test.describe('CycloneDX Workflow', () => {
     expect(downloadedContent.bomFormat).toBe('CycloneDX');
     expect(downloadedContent.components).toBeDefined();
 
-    const updatedComponent = downloadedContent.components.find((comp: any) => comp.name === 'test-package');
+    const updatedComponent = downloadedContent.components.find(
+      (comp: any) => comp.name === 'test-package'
+    );
     expect(updatedComponent).toBeDefined();
     expect(updatedComponent.version).toBe('2.0.0');
 
@@ -88,7 +90,7 @@ test.describe('CycloneDX Workflow', () => {
 
     // Navigate to custom attributes tab
     const customAttrTab = page.locator('[role="tab"]:has-text("カスタム属性")');
-    if (await customAttrTab.count() > 0) {
+    if ((await customAttrTab.count()) > 0) {
       await customAttrTab.click();
       await page.waitForTimeout(500);
     }
@@ -106,7 +108,7 @@ test.describe('CycloneDX Workflow', () => {
 
     // Navigate to license tab
     const licenseTab = page.getByRole('main').locator('[role="tab"]:has-text("ライセンス")');
-    if (await licenseTab.count() > 0) {
+    if ((await licenseTab.count()) > 0) {
       await licenseTab.click();
       // MIT is inside the SPDX License ID textbox
       await expect(page.getByRole('textbox', { name: 'SPDX License ID' })).toHaveValue('MIT');

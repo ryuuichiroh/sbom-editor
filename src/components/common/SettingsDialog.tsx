@@ -3,7 +3,7 @@
  * field-requirements.json と custom-attributes.json のアップロード・リセット機能を提供
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -17,9 +17,12 @@ import {
   Snackbar,
   useMediaQuery,
   useTheme,
+  TextField,
+  CircularProgress,
 } from '@mui/material';
 import { Upload as UploadIcon, RestartAlt as ResetIcon } from '@mui/icons-material';
 import { useConfig } from '../../store/configStore';
+import { useStoreConnection } from '../../hooks/useStoreConnection';
 import {
   loadConfigFromFile,
   validateFieldRequirements,
@@ -30,6 +33,7 @@ import {
   resetCustomAttributes,
 } from '../../services/configLoader';
 import type { FieldRequirementsConfig, CustomAttributesConfig } from '../../types/config';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '../../utils/errorMessages';
 
 export interface SettingsDialogProps {
   open: boolean;
@@ -38,8 +42,15 @@ export interface SettingsDialogProps {
 
 export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
   const { state, dispatch } = useConfig();
+  const { storeUrl, isConnected, updateStoreUrl, testConnection } = useStoreConnection();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [localStoreUrl, setLocalStoreUrl] = useState('');
+  const [connectionStatus, setConnectionStatus] = useState<{
+    message: string;
+    severity: 'success' | 'error';
+  } | null>(null);
+  const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -49,6 +60,13 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
     message: '',
     severity: 'success',
   });
+
+  // ダイアログが開いたときに現在のストア URL を localStoreUrl にセット
+  useEffect(() => {
+    if (open && storeUrl) {
+      setLocalStoreUrl(storeUrl);
+    }
+  }, [open, storeUrl]);
 
   /**
    * スナックバーを表示
@@ -174,14 +192,66 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
     })();
   };
 
+  /**
+   * ストア接続テスト
+   */
+  const handleTestConnection = async () => {
+    if (!localStoreUrl.trim()) {
+      setConnectionStatus({
+        message: ERROR_MESSAGES.CONNECTION.TEST_REQUIRED,
+        severity: 'error',
+      });
+      return;
+    }
+
+    setIsTestingConnection(true);
+    setConnectionStatus(null);
+
+    try {
+      const success = await testConnection(localStoreUrl.trim());
+      if (success) {
+        setConnectionStatus({
+          message: SUCCESS_MESSAGES.CONNECTION.TEST_SUCCESS,
+          severity: 'success',
+        });
+        // 接続成功時に URL を保存
+        updateStoreUrl(localStoreUrl.trim());
+      } else {
+        setConnectionStatus({
+          message: ERROR_MESSAGES.CONNECTION.FAILED,
+          severity: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('接続テストエラー:', error);
+      setConnectionStatus({
+        message: `${ERROR_MESSAGES.CONNECTION.FAILED}: ${error instanceof Error ? error.message : ERROR_MESSAGES.GENERIC.UNKNOWN}`,
+        severity: 'error',
+      });
+    } finally {
+      setIsTestingConnection(false);
+    }
+  };
+
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth fullScreen={fullScreen}>
-        <DialogTitle>設定</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="md"
+        fullWidth
+        fullScreen={fullScreen}
+        aria-labelledby="settings-dialog-title"
+        aria-describedby="settings-dialog-description"
+      >
+        <DialogTitle id="settings-dialog-title">設定</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
+          <Box
+            id="settings-dialog-description"
+            sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}
+          >
             {/* 必須属性設定 */}
-            <Paper variant="outlined" sx={{ p: 2 }}>
+            <Paper variant="outlined" sx={{ p: 2 }} role="region" aria-label="必須属性設定">
               <Typography variant="h6" gutterBottom>
                 必須属性設定 (field-requirements.json)
               </Typography>
@@ -190,7 +260,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
               </Typography>
 
               {state.fieldRequirements && (
-                <Alert severity="info" sx={{ mb: 2 }}>
+                <Alert severity="info" sx={{ mb: 2 }} role="status">
                   現在の設定: バージョン {state.fieldRequirements.version}
                   {state.fieldRequirements.description &&
                     ` - ${state.fieldRequirements.description}`}
@@ -203,6 +273,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                   component="label"
                   startIcon={<UploadIcon />}
                   size="small"
+                  aria-label="必須属性設定ファイルをアップロード"
                 >
                   ファイルをアップロード
                   <input
@@ -210,6 +281,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                     hidden
                     accept=".json"
                     onChange={handleFieldRequirementsUpload}
+                    aria-label="必須属性設定 JSON ファイルを選択"
                   />
                 </Button>
                 <Button
@@ -217,6 +289,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                   startIcon={<ResetIcon />}
                   onClick={handleFieldRequirementsReset}
                   size="small"
+                  aria-label="必須属性設定をデフォルトに戻す"
                 >
                   デフォルトに戻す
                 </Button>
@@ -224,7 +297,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
             </Paper>
 
             {/* カスタム属性設定 */}
-            <Paper variant="outlined" sx={{ p: 2 }}>
+            <Paper variant="outlined" sx={{ p: 2 }} role="region" aria-label="カスタム属性設定">
               <Typography variant="h6" gutterBottom>
                 カスタム属性設定 (custom-attributes.json)
               </Typography>
@@ -233,7 +306,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
               </Typography>
 
               {state.customAttributes && (
-                <Alert severity="info" sx={{ mb: 2 }}>
+                <Alert severity="info" sx={{ mb: 2 }} role="status">
                   現在の設定: バージョン {state.customAttributes.version}
                   {state.customAttributes.description && ` - ${state.customAttributes.description}`}
                   <br />
@@ -247,6 +320,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                   component="label"
                   startIcon={<UploadIcon />}
                   size="small"
+                  aria-label="カスタム属性設定ファイルをアップロード"
                 >
                   ファイルをアップロード
                   <input
@@ -254,6 +328,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                     hidden
                     accept=".json"
                     onChange={handleCustomAttributesUpload}
+                    aria-label="カスタム属性設定 JSON ファイルを選択"
                   />
                 </Button>
                 <Button
@@ -261,20 +336,83 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                   startIcon={<ResetIcon />}
                   onClick={handleCustomAttributesReset}
                   size="small"
+                  aria-label="カスタム属性設定をデフォルトに戻す"
                 >
                   デフォルトに戻す
                 </Button>
               </Box>
             </Paper>
 
+            {/* ストア接続設定 */}
+            <Paper variant="outlined" sx={{ p: 2 }} role="region" aria-label="ストア接続設定">
+              <Typography variant="h6" gutterBottom>
+                ストア接続設定
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                sbom-store の接続先 URL を設定します。
+              </Typography>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TextField
+                  label="sbom-store URL"
+                  value={localStoreUrl ?? storeUrl ?? ''}
+                  onChange={(e) => {
+                    setLocalStoreUrl(e.target.value);
+                  }}
+                  fullWidth
+                  placeholder="http://localhost:3000"
+                  size="small"
+                  slotProps={{
+                    htmlInput: {
+                      'aria-label': 'sbom-store 接続 URL',
+                    },
+                  }}
+                />
+
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => void handleTestConnection()}
+                    disabled={isTestingConnection}
+                    size="small"
+                    aria-label="ストア接続をテスト"
+                  >
+                    {isTestingConnection ? (
+                      <CircularProgress size={20} aria-label="接続テスト中" />
+                    ) : (
+                      '接続テスト'
+                    )}
+                  </Button>
+
+                  {isConnected && !connectionStatus && (
+                    <Alert severity="success" sx={{ py: 0, flex: 1 }} role="status">
+                      接続済み
+                    </Alert>
+                  )}
+                </Box>
+
+                {connectionStatus && (
+                  <Alert
+                    severity={connectionStatus.severity}
+                    role={connectionStatus.severity === 'error' ? 'alert' : 'status'}
+                    aria-live={connectionStatus.severity === 'error' ? 'assertive' : 'polite'}
+                  >
+                    {connectionStatus.message}
+                  </Alert>
+                )}
+              </Box>
+            </Paper>
+
             {/* 説明 */}
-            <Alert severity="info">
+            <Alert severity="info" role="note">
               設定は localStorage に保存され、次回起動時も維持されます。
             </Alert>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>閉じる</Button>
+          <Button onClick={onClose} aria-label="設定ダイアログを閉じる">
+            閉じる
+          </Button>
         </DialogActions>
       </Dialog>
 

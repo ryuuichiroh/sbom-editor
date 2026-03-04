@@ -14,12 +14,14 @@ export async function uploadSBOMFile(page: Page, filename: string): Promise<void
   await expect(page.getByRole('heading', { name: 'SBOM ファイルをアップロード' })).toBeVisible();
 
   // ファイルをアップロード
-  const fileInput = page.locator('input#file-input');
+  const fileInput = page.locator('input[type="file"]');
   const filePath = path.join(import.meta.dirname, '..', 'fixtures', filename);
   await fileInput.setInputFiles(filePath);
 
   // ダイアログが閉じるのを待つ
-  await expect(page.getByRole('heading', { name: 'SBOM ファイルをアップロード' })).not.toBeVisible({ timeout: 5000 });
+  await expect(page.getByRole('heading', { name: 'SBOM ファイルをアップロード' })).not.toBeVisible({
+    timeout: 5000,
+  });
 }
 
 /**
@@ -41,8 +43,11 @@ export async function openComponentEditor(page: Page, componentName: string): Pr
  * タブを切り替える
  */
 export async function switchTab(page: Page, tabName: string): Promise<void> {
-  const tab = page.getByRole('main').locator(`button:has-text("${tabName}")`).or(page.getByRole('main').locator(`[role="tab"]:has-text("${tabName}")`));
-  if (await tab.count() > 0) {
+  const tab = page
+    .getByRole('main')
+    .locator(`button:has-text("${tabName}")`)
+    .or(page.getByRole('main').locator(`[role="tab"]:has-text("${tabName}")`));
+  if ((await tab.count()) > 0) {
     await tab.click();
   }
 }

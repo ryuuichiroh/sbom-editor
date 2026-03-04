@@ -13,6 +13,8 @@ import {
   Menu,
   MenuItem,
   Box,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Upload as UploadIcon,
@@ -22,13 +24,19 @@ import {
   Redo as RedoIcon,
   Speed as SpeedIcon,
   Menu as MenuIcon,
+  CloudDownload as CloudDownloadIcon,
+  CloudUpload as CloudUploadIcon,
 } from '@mui/icons-material';
 import { FileUploadDialog } from '../upload/FileUploadDialog';
 import { PerformanceTest } from './PerformanceTest';
+import { StoreConnectDialog } from '../store/StoreConnectDialog';
+import { StoreSaveDialog } from '../store/StoreSaveDialog';
 import { useSBOM } from '../../store/sbomStore';
 import { useUndoRedo } from '../../store/commandHistory';
+import { useStoreConnection } from '../../hooks/useStoreConnection';
 import { convertToSPDXJSON } from '../../services/exporter/spdxExporter';
 import { convertToCycloneDXJSON } from '../../services/exporter/cyclonedxExporter';
+import type { UnifiedSBOM } from '../../types/unified';
 
 export interface HeaderProps {
   onSettingsClick?: () => void;
@@ -38,9 +46,17 @@ export interface HeaderProps {
 export const Header = ({ onSettingsClick, onMenuClick }: HeaderProps) => {
   const { state, dispatch } = useSBOM();
   const { undo, redo, canUndo, canRedo } = useUndoRedo(dispatch);
+  const { storeUrl } = useStoreConnection();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [performanceTestOpen, setPerformanceTestOpen] = useState(false);
   const [downloadMenuAnchor, setDownloadMenuAnchor] = useState<null | HTMLElement>(null);
+  const [storeConnectOpen, setStoreConnectOpen] = useState(false);
+  const [storeSaveOpen, setStoreSaveOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({ open: false, message: '', severity: 'success' });
 
   const hasSBOM = state.sbom !== null;
   const isDownloadMenuOpen = Boolean(downloadMenuAnchor);
@@ -139,6 +155,50 @@ export const Header = ({ onSettingsClick, onMenuClick }: HeaderProps) => {
     }
   }, [state.sbom, handleDownloadSPDX, handleDownloadCycloneDX]);
 
+  /**
+   * ストアから読み込んだ SBOM をセット
+   */
+  const handleLoadFromStore = useCallback(
+    (sbom: UnifiedSBOM) => {
+      dispatch({ type: 'LOAD_SBOM', payload: sbom });
+      setSnackbar({
+        open: true,
+        message: 'ストアから SBOM を読み込みました',
+        severity: 'success',
+      });
+    },
+    [dispatch]
+  );
+
+  /**
+   * ストア保存成功時の処理
+   */
+  const handleStoreSaveSuccess = useCallback((message: string) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'success',
+    });
+  }, []);
+
+  /**
+   * ストアエラー時の処理
+   */
+  const handleStoreError = useCallback((message: string) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'error',
+    });
+  }, []);
+
+  /**
+   * スナックバーを閉じる
+   */
+  const handleSnackbarClose = useCallback(() => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  }, []);
+
   return (
     <>
       <AppBar position="static" color="default" elevation={1}>
@@ -229,6 +289,61 @@ export const Header = ({ onSettingsClick, onMenuClick }: HeaderProps) => {
               <DownloadIcon />
             </IconButton>
 
+            {/* ストア連携ボタン（URL が設定されている場合のみ表示） */}
+            {storeUrl && (
+              <>
+                <Button
+                  variant="outlined"
+                  startIcon={<CloudDownloadIcon />}
+                  onClick={() => {
+                    setStoreConnectOpen(true);
+                  }}
+                  size="small"
+                  sx={{
+                    display: { xs: 'none', sm: 'inline-flex' },
+                  }}
+                >
+                  ストアから読み込み
+                </Button>
+                <IconButton
+                  color="default"
+                  onClick={() => {
+                    setStoreConnectOpen(true);
+                  }}
+                  aria-label="ストアから読み込み"
+                  sx={{ display: { xs: 'inline-flex', sm: 'none' } }}
+                >
+                  <CloudDownloadIcon />
+                </IconButton>
+
+                <Button
+                  variant="outlined"
+                  startIcon={<CloudUploadIcon />}
+                  onClick={() => {
+                    setStoreSaveOpen(true);
+                  }}
+                  disabled={!hasSBOM}
+                  size="small"
+                  sx={{
+                    display: { xs: 'none', sm: 'inline-flex' },
+                  }}
+                >
+                  ストアへ保存
+                </Button>
+                <IconButton
+                  color="default"
+                  onClick={() => {
+                    setStoreSaveOpen(true);
+                  }}
+                  disabled={!hasSBOM}
+                  aria-label="ストアへ保存"
+                  sx={{ display: { xs: 'inline-flex', sm: 'none' } }}
+                >
+                  <CloudUploadIcon />
+                </IconButton>
+              </>
+            )}
+
             {/* 設定ボタン */}
             <IconButton color="default" onClick={onSettingsClick} aria-label="設定" size="small">
               <SettingsIcon />
@@ -279,6 +394,39 @@ export const Header = ({ onSettingsClick, onMenuClick }: HeaderProps) => {
           setPerformanceTestOpen(false);
         }}
       />
+
+      {/* ストア読み込みダイアログ */}
+      <StoreConnectDialog
+        open={storeConnectOpen}
+        onClose={() => {
+          setStoreConnectOpen(false);
+        }}
+        onLoad={handleLoadFromStore}
+        onError={handleStoreError}
+      />
+
+      {/* ストア保存ダイアログ */}
+      <StoreSaveDialog
+        open={storeSaveOpen}
+        onClose={() => {
+          setStoreSaveOpen(false);
+        }}
+        sbom={state.sbom}
+        onSaveSuccess={handleStoreSaveSuccess}
+        onError={handleStoreError}
+      />
+
+      {/* スナックバー */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
