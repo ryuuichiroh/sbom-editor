@@ -1,5 +1,9 @@
 # SBOM Editor
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![SPDX](https://img.shields.io/badge/SPDX-2.3-green)](https://spdx.dev/)
+[![CycloneDX](https://img.shields.io/badge/CycloneDX-1.4-green)](https://cyclonedx.org/)
+
 SPDX 2.3 と CycloneDX 1.4 の両フォーマットに対応した SBOM（Software Bill of Materials）の閲覧・編集ツール。
 
 ## 特徴
@@ -208,14 +212,23 @@ public/config/       # デフォルト設定ファイル
 e2e/                 # E2E テスト
 ```
 
-## ライセンス
+## Contributing
 
-このプロジェクトは MIT ライセンスの下で公開されています。詳細は [LICENSE](LICENSE) を参照してください。
+コントリビューションを歓迎します！
 
-## 貢献
+1. このリポジトリをフォーク
+2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
+3. 変更をコミット (`git commit -m 'Add some amazing feature'`)
+4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
+5. プルリクエストを作成
 
-Issue や Pull Request を歓迎します。
+バグ報告や機能要望は [Issues](https://github.com/ryuuichiroh/sbom-editor/issues) からお願いします。
 
-## サポート
+## Links
 
-問題が発生した場合は、GitHub Issues でお知らせください。
+- [Issues](https://github.com/ryuuichiroh/sbom-editor/issues) - バグ報告・機能要望
+- [Releases](https://github.com/ryuuichiroh/sbom-editor/releases) - リリース履歴
+
+## License
+
+このプロジェクトは Apache License 2.0 の下でライセンスされています。詳細は [LICENSE](LICENSE) ファイルを参照してください。
